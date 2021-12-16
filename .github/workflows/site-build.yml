@@ -30,7 +30,7 @@ jobs:
     - name: Checkout repo of OSC2 from ASAM GitLab
       env: 
         OSC2_REPO_READ: ${{ secrets.OSC2_REPO_READ }}
-      run: "git clone --branch master https://oauth2:$OSC2_REPO_READ@code.asam.net/simulation/standard/openscenario-2.0.git osc2" #TODO
+      run: "git clone --branch 2.0.0-PRC.1 https://oauth2:$OSC2_REPO_READ@code.asam.net/simulation/standard/openscenario-2.0.git osc2"
 
     - name: Checkout repo of additional script
       working-directory: osc2
