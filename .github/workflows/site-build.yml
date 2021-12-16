@@ -1,0 +1,97 @@
+name: Documentation build
+
+on:
+  # create: # new branches or tags
+  # release: # new releases
+  # pull_request: 
+  #   branches: [ main ]
+  push: # on push. This may be removed later
+  # schedule: # periodic - needed because some of the content is from the other repos
+  #   - cron:  '0 5-20 * * *' # during the day hourly
+  workflow_dispatch: # manual trigger
+
+jobs: 
+  build_and_publish:
+    name: Build and deploy the standard
+    runs-on: ubuntu-20.04
+
+    services: 
+      kroki:
+        image: yuzutech/kroki
+        env:
+          KROKI_MAX_URI_LENGTH: 8000
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    # Checkout repo of OSC2
+    - name: Checkout repo of OSC2 from ASAM GitLab
+      env: 
+        OSC2_REPO_READ: ${{ secrets.OSC2_REPO_READ }}
+      run: "git clone --branch master https://oauth2:$OSC2_REPO_READ@code.asam.net/simulation/standard/openscenario-2.0.git osc2" #TODO
+
+    - name: Checkout repo of additional script
+      working-directory: osc2
+      env: 
+        XML2ADOC_REPO_READ: ${{ secrets.XML2ADOC_REPO_READ }}
+      run: "git clone https://oauth2:$XML2ADOC_REPO_READ@code.asam.net/common/uml2adoc.git"
+    
+    # setup python        
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+
+    # install python dependencies
+    - name: install python dependencies
+      run: python -m pip install --no-cache-dir pyyaml
+
+    # run additional python script
+    - name: run python script macro replacement
+      working-directory: osc2
+      run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
+
+    # Versioning
+    - name: Get versioning
+      id: get_version
+      working-directory: osc2
+      run: echo ::set-output name=VERSION::$(git describe --always --tags)
+ 
+    # # Apply versioning in header of site - This is just for the development phase
+    # - name: Apply versioning to header of site
+    #   uses: jacobtomlinson/gha-find-replace@master
+    #   with: 
+    #     find: "V{{page.componentVersion.displayVersion}}"
+    #     replace: "Development (Version ${{ steps.get_version.outputs.VERSION }})"
+    #     include: osc2/supplemental_ui/partials/header-content.hbs
+
+    # # Apply versioning in site.yml
+    # - name: Apply versioning to site.yml
+    #   uses: jacobtomlinson/gha-find-replace@master
+    #   with: 
+    #     find: "    THIS_VERSION: --localbuild--"
+    #     replace: "    THIS_VERSION: ${{ steps.get_version.outputs.VERSION }}" 
+    #     include: osc2/site.yml
+
+    # Debug
+    - name: Versioning Debug
+      run: |
+        grep version osc2/standard/antora.yml
+        grep THIS_VERSION osc2/site.yml
+
+    # build site
+    - name: Generate site
+      uses: docker://ghcr.io/asam-ev/temporary_hosting_osc2:latest
+      with:
+        entrypoint: sh
+        args: run-build.sh
+
+    # deploy to gh-pages
+    - name: deploy to gh-pages if push to main branch
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses:  peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./osc2/public
