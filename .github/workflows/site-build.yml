@@ -49,9 +49,9 @@ jobs:
       run: python -m pip install --no-cache-dir pyyaml
 
     # run additional python script
-    - name: run python script macro replacement
-      working-directory: osc2
-      run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
+#     - name: run python script macro replacement
+#       working-directory: osc2
+#       run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
 
     # Versioning
     - name: Get versioning
@@ -83,7 +83,7 @@ jobs:
 
     # build site
     - name: Generate site
-      uses: docker://ghcr.io/asam-ev/temporary_hosting_osc2:latest
+      uses: docker://ghcr.io/asam-ev/project-guide-docker:3
       with:
         entrypoint: sh
         args: run-build.sh
