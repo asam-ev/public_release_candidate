@@ -83,7 +83,7 @@ jobs:
 
     # build site
     - name: Generate site
-      uses: docker://ghcr.io/asam-ev/temporary_hosting_osc2:latest
+      uses: docker://ghcr.io/asam-ev/project-guide-docker:4
       with:
         entrypoint: sh
         args: run-build.sh
