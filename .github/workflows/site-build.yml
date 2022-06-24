@@ -30,13 +30,19 @@ jobs:
     - name: Checkout repo of OSC2 from ASAM GitLab
       env: 
         OSC2_REPO_READ: ${{ secrets.OSC2_REPO_READ }}
-      run: "git clone --branch master https://oauth2:$OSC2_REPO_READ@code.asam.net/simulation/standard/openscenario-2.0.git osc2"
+      run: "git clone --branch master https://oauth2:$OSC2_REPO_READ@code.asam.net/simulation/standard/openscenario-2.0.git repo"
 
     - name: Checkout repo of additional script
-      working-directory: osc2
+      working-directory: repo
       env: 
         XML2ADOC_REPO_READ: ${{ secrets.XML2ADOC_REPO_READ }}
       run: "git clone https://oauth2:$XML2ADOC_REPO_READ@code.asam.net/common/uml2adoc.git"
+      
+    - name: Checkout repo with extensions
+      working-directory: repo
+      env:
+        EXTENSIONS_REPO_READ: ${{ secrets.EXTENSIONS_REPO_READ }}
+      run: "git clone https://oauth2:$EXTENSIONS_REPO_READ@code.asam.net/common/asam-antora-extensions.git"
     
     # setup python        
     - name: Setup Python
@@ -48,15 +54,15 @@ jobs:
     - name: install python dependencies
       run: python -m pip install --no-cache-dir pyyaml
 
-    # run additional python script
-    - name: run python script macro replacement
-      working-directory: osc2
-      run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
+#     # run additional python script
+#     - name: run python script macro replacement
+#       working-directory: repo
+#       run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
 
     # Versioning
     - name: Get versioning
       id: get_version
-      working-directory: osc2
+      working-directory: repo
       run: echo ::set-output name=VERSION::$(git describe --always --tags)
  
     # # Apply versioning in header of site - This is just for the development phase
@@ -78,8 +84,8 @@ jobs:
     # Debug
     - name: Versioning Debug
       run: |
-        grep version osc2/standard/antora.yml
-        grep THIS_VERSION osc2/site.yml
+        grep version repo/standard/antora.yml
+        grep THIS_VERSION repo/site.yml
 
     # build site
     - name: Generate site
@@ -89,9 +95,9 @@ jobs:
         args: run-build.sh
 
     # deploy to gh-pages
-    - name: deploy to gh-pages if push to main branch
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses:  peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./osc2/public
+#     - name: deploy to gh-pages if push to main branch
+#       if: ${{ github.ref == 'refs/heads/main' }}
+#       uses:  peaceiris/actions-gh-pages@v3
+#       with:
+#         github_token: ${{ secrets.GITHUB_TOKEN }}
+#         publish_dir: ./osc2/public
