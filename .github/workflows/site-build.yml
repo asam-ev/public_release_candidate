@@ -54,10 +54,10 @@ jobs:
     - name: install python dependencies
       run: python -m pip install --no-cache-dir pyyaml
 
-    # run additional python script
-    - name: run python script macro replacement
-      working-directory: repo
-      run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
+#     # run additional python script
+#     - name: run python script macro replacement
+#       working-directory: repo
+#       run:  python uml2adoc/uml2adoc/uml2adoc.py uml2adoc_config.yml
 
     # Versioning
     - name: Get versioning
