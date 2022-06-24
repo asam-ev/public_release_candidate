@@ -6,8 +6,8 @@ on:
   # pull_request: 
   #   branches: [ main ]
   push: # on push. This may be removed later
-  schedule: # periodic - needed because some of the content is from the other repos
-   - cron:  '0 5-20 * * *' # during the day hourly
+  # schedule: # periodic - needed because some of the content is from the other repos
+  # - cron:  '0 5-20 * * *' # during the day hourly
   workflow_dispatch: # manual trigger
 
 jobs: 
@@ -83,7 +83,7 @@ jobs:
 
     # build site
     - name: Generate site
-      uses: docker://ghcr.io/asam-ev/temporary_hosting_osc2:latest
+      uses: docker://ghcr.io/asam-ev/project-guide-docker:4
       with:
         entrypoint: sh
         args: run-build.sh
