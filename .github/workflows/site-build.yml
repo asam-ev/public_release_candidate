@@ -37,6 +37,12 @@ jobs:
       env: 
         XML2ADOC_REPO_READ: ${{ secrets.XML2ADOC_REPO_READ }}
       run: "git clone https://oauth2:$XML2ADOC_REPO_READ@code.asam.net/common/uml2adoc.git"
+      
+    - name: Checkout repo with extensions
+      working-directory: repo/asam-antora-extension
+      env:
+        EXTENSIONS_REPO_READ: ${{ secrets.EXTENSIONS_REPO_READ }}
+      run: "git clone https://oauth2:$EXTENSIONS_REPO_READ@code.asam.net/common/asam-antora-extensions.git"
     
     # setup python        
     - name: Setup Python
