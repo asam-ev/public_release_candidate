@@ -89,9 +89,9 @@ jobs:
         args: run-build.sh
 
     # deploy to gh-pages
-    - name: deploy to gh-pages if push to main branch
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses:  peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./osc2/public
+#     - name: deploy to gh-pages if push to main branch
+#       if: ${{ github.ref == 'refs/heads/main' }}
+#       uses:  peaceiris/actions-gh-pages@v3
+#       with:
+#         github_token: ${{ secrets.GITHUB_TOKEN }}
+#         publish_dir: ./osc2/public
