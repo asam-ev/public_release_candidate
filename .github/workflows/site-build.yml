@@ -6,8 +6,8 @@ on:
   # pull_request: 
   #   branches: [ main ]
   push: # on push. This may be removed later
-  # schedule: # periodic - needed because some of the content is from the other repos
-  # - cron:  '0 5-20 * * *' # during the day hourly
+  schedule: # periodic - needed because some of the content is from the other repos
+  - cron:  '0 5-20 * * *' # during the day hourly
   workflow_dispatch: # manual trigger
 
 jobs: 
